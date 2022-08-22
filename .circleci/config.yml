@@ -148,7 +148,7 @@ jobs:
           name: examples
           command: |
             cd code
-            yarn build-storybooks --all
+            yarn build-storybooks --all --skip official-storybook
       - persist_to_workspace:
           root: .
           paths:
