@@ -350,34 +350,34 @@ jobs:
   #     - store_artifacts:
   #         path: /tmp/storybook-e2e-testing-out.zip
   #         destination: e2e
-  e2e-tests-examples:
-    executor:
-      class: small
-      name: sb_cypress_8_node_14
-    steps:
-      - git-shallow-clone/checkout_advanced:
-          clone_options: '--depth 1 --verbose'
-      - attach_workspace:
-          at: .
-      - run:
-          name: running example
-          command: |
-            cd code
-            yarn serve-storybooks
-          background: true
-      - run:
-          name: await running examples
-          command: |
-            cd code
-            yarn await-serve-storybooks
-      - run:
-          name: cypress run
-          command: |
-            cd code
-            yarn test:e2e-examples
-      - store_artifacts:
-          path: /tmp/cypress-record
-          destination: cypress
+  # e2e-tests-examples:
+  #   executor:
+  #     class: small
+  #     name: sb_cypress_8_node_14
+  #   steps:
+  #     - git-shallow-clone/checkout_advanced:
+  #         clone_options: '--depth 1 --verbose'
+  #     - attach_workspace:
+  #         at: .
+  #     - run:
+  #         name: running example
+  #         command: |
+  #           cd code
+  #           yarn serve-storybooks
+  #         background: true
+  #     - run:
+  #         name: await running examples
+  #         command: |
+  #           cd code
+  #           yarn await-serve-storybooks
+  #     - run:
+  #         name: cypress run
+  #         command: |
+  #           cd code
+  #           yarn test:e2e-examples
+  #     - store_artifacts:
+  #         path: /tmp/cypress-record
+  #         destination: cypress
   smoke-tests:
     executor:
       class: medium+
@@ -576,9 +576,6 @@ workflows:
       - examples:
           requires:
             - build
-      - e2e-tests-examples:
-          requires:
-            - examples
       - smoke-tests:
           requires:
             - build
