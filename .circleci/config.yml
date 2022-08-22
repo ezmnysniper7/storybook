@@ -46,6 +46,7 @@ executors:
 orbs:
   git-shallow-clone: guitarrapc/git-shallow-clone@2.0.3
   browser-tools: circleci/browser-tools@1.4.0
+  codecov: codecov/codecov@3.2.3
 
 commands:
   ensure-pr-is-labeled-with:
