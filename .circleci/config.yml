@@ -6,7 +6,7 @@ executors:
       class:
         description: The Resource class
         type: enum
-        enum: ['small', 'medium', 'medium+', 'large', 'xlarge']
+        enum: ['small', 'medium', 'medium+']
         default: 'medium'
     working_directory: /tmp/storybook
     docker:
@@ -19,7 +19,7 @@ executors:
       class:
         description: The Resource class
         type: enum
-        enum: ['small', 'medium', 'medium+', 'large', 'xlarge']
+        enum: ['small', 'medium', 'medium+']
         default: 'medium'
     working_directory: /tmp/storybook
     docker:
@@ -32,7 +32,7 @@ executors:
       class:
         description: The Resource class
         type: enum
-        enum: ['small', 'medium', 'medium+', 'large', 'xlarge']
+        enum: ['small', 'medium', 'medium+']
         default: 'medium'
     working_directory: /tmp/storybook
     docker:
@@ -79,7 +79,7 @@ commands:
 jobs:
   build:
     executor:
-      class: xlarge
+      class: medium
       name: sb_node_14_classic
     steps:
       - git-shallow-clone/checkout_advanced:
@@ -136,7 +136,7 @@ jobs:
             yarn run-chromatics
   examples:
     executor:
-      class: medium+
+      class: medium
       name: sb_node_14_browsers
     parallelism: 15
     steps:
@@ -211,45 +211,46 @@ jobs:
       - store_artifacts:
           path: /tmp/cypress-record
           destination: cypress
-  e2e-tests-core:
-    executor:
-      class: large
-      name: sb_cypress_8_node_14
-    parallelism: 8
-    steps:
-      - git-shallow-clone/checkout_advanced:
-          clone_options: '--depth 1 --verbose'
-      - attach_workspace:
-          at: .
-      - run:
-          name: Running local registry
-          command: |
-            cd code
-            yarn local-registry --port 6000 --open
-          background: true
-      - run:
-          name: Wait for registry
-          command: |
-            cd code
-            yarn wait-on http://localhost:6000
-      - run:
-          name: Run E2E (core) tests
-          # Do not test CRA here because it's done in PnP part
-          # TODO: Remove `web_components_typescript` as soon as Lit 2 stable is released
-          command: |
-            cd code
-            yarn test:e2e-framework vue3 angular130 angular13 angular12 web_components_typescript web_components_lit2 react react_legacy_root_api
-          no_output_timeout: 5m
-      - run:
-          name: prep artifacts
-          when: always
-          command: zip -r /tmp/storybook-e2e-testing-out.zip /tmp/storybook-e2e-testing
-      - store_artifacts:
-          path: /tmp/cypress-record
-          destination: cypress
-      - store_artifacts:
-          path: /tmp/storybook-e2e-testing-out.zip
-          destination: e2e
+  ##Commented out because of restrictions
+  # e2e-tests-core:
+  #   executor:
+  #     class: large
+  #     name: sb_cypress_8_node_14
+  #   parallelism: 8
+  #   steps:
+  #     - git-shallow-clone/checkout_advanced:
+  #         clone_options: '--depth 1 --verbose'
+  #     - attach_workspace:
+  #         at: .
+  #     - run:
+  #         name: Running local registry
+  #         command: |
+  #           cd code
+  #           yarn local-registry --port 6000 --open
+  #         background: true
+  #     - run:
+  #         name: Wait for registry
+  #         command: |
+  #           cd code
+  #           yarn wait-on http://localhost:6000
+  #     - run:
+  #         name: Run E2E (core) tests
+  #         # Do not test CRA here because it's done in PnP part
+  #         # TODO: Remove `web_components_typescript` as soon as Lit 2 stable is released
+  #         command: |
+  #           cd code
+  #           yarn test:e2e-framework vue3 angular130 angular13 angular12 web_components_typescript web_components_lit2 react react_legacy_root_api
+  #         no_output_timeout: 5m
+  #     - run:
+  #         name: prep artifacts
+  #         when: always
+  #         command: zip -r /tmp/storybook-e2e-testing-out.zip /tmp/storybook-e2e-testing
+  #     - store_artifacts:
+  #         path: /tmp/cypress-record
+  #         destination: cypress
+  #     - store_artifacts:
+  #         path: /tmp/storybook-e2e-testing-out.zip
+  #         destination: e2e
   # NOTE: this currently tests each story in docs mode, which doesn't make sense any more as stories
   #   can no longer run in docs mode. Instead we should probably change the test runner to test each
   #   docs entry if you run it in `VIEW_MODE=docs`
@@ -597,9 +598,6 @@ workflows:
           requires:
             - build
       - e2e-tests-extended:
-          requires:
-            - publish
-      - e2e-tests-core:
           requires:
             - publish
       - e2e-tests-pnp:
