@@ -134,25 +134,25 @@ jobs:
   #         command: |
   #           cd code
   #           yarn run-chromatics
-  # examples:
-  #   executor:
-  #     class: medium
-  #     name: sb_node_14_browsers
-  #   parallelism: 15
-  #   steps:
-  #     - git-shallow-clone/checkout_advanced:
-  #         clone_options: '--depth 1 --verbose'
-  #     - attach_workspace:
-  #         at: .
-  #     - run:
-  #         name: examples
-  #         command: |
-  #           cd code
-  #           yarn build-storybooks --all
-  #     - persist_to_workspace:
-  #         root: .
-  #         paths:
-  #           - code/built-storybooks
+  examples:
+    executor:
+      class: medium
+      name: sb_node_14_browsers
+    parallelism: 15
+    steps:
+      - git-shallow-clone/checkout_advanced:
+          clone_options: '--depth 1 --verbose'
+      - attach_workspace:
+          at: .
+      - run:
+          name: examples
+          command: |
+            cd code
+            yarn build-storybooks --all
+      - persist_to_workspace:
+          root: .
+          paths:
+            - code/built-storybooks
   publish:
     executor:
       class: medium
@@ -571,6 +571,9 @@ workflows:
     jobs:
       - build
       - lint:
+          requires:
+            - build
+      - examples:
           requires:
             - build
       - e2e-tests-examples:
