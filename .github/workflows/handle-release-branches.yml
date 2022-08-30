@@ -24,7 +24,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - run: curl -X POST "https://api.netlify.com/build_hooks/${{ secrets.FRONTPAGE_HOOK }}"
 
   get-next-release-branch:
@@ -36,7 +35,7 @@ jobs:
         with:
           ref: next
           path: next
-
+          persist-credentials: false
       - id: next-version
         uses: notiz-dev/github-action-json-property@release
         with:
@@ -57,7 +56,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
       - run: |
           set +e
           REMOTE_BRANCH=$(git branch -r | grep origin/${{ needs.get-next-release-branch.outputs.branch }})
